@@ -1,9 +1,10 @@
 package nt
 
-import (
-	"fmt"
-)
+// #cgo CPPFLAGS: -I${SRCDIR}/include
+// #cgo LDFLAGS: -L${SRCDIR}/libs -lntcore
+// #include "networktables/NetworkTable.h"
+import "C"
 
-func main() {
-	fmt.Println("Hello, World")
-}
+import (
+	"unsafe"
+)
