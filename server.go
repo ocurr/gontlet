@@ -1,35 +1,64 @@
 package gontlet
 
 import (
+	"fmt"
 	"net"
 )
 
 type Server struct {
-	listeners map[string][]net.Conn
-	send chan string
-	recv chan string
+	robotConn net.Conn
+	send chan []byte
+	recv chan []byte
 }
 
 func NewServer() *Server {
 	s := Server{
-		listeners: make(map[string][]net.Conn),
-		send: make(chan string, 25),
-		recv: make(chan string, 25),
+		robotConn: nil,
+		send: make(chan []byte, 25),
+		recv: make(chan []byte, 25),
 	}
 	return &s
 }
 
-func (s* Server) RegisterConnection(tableName string, c net.Conn) {
-	s.listeners[tableName] = append(s.listeners[tableName], c)
+func (s* Server) RegisterConnection(c net.Conn) {
+	s.robotConn = c
 }
 
-func (s* Server) UpdateListeners(tableName string, data []byte) error {
-	for _,conn := range s.listeners[tableName] {
-		_,err := conn.Write(data)
+func (s* Server) SendOutgoing(data []byte) {
+	s.send <- data
+}
+
+func (s* Server) GetIncoming() []byte {
+	return <- s.recv
+}
+
+func (s* Server) WriteData() {
+	defer s.robotConn.Close()
+	for {
+		buff := <-s.send
+		msg := make([]byte, 1)
+		msg[0] = byte(uint8(len(buff)))
+		msg = append(msg, buff...)
+		_, err := s.robotConn.Write(msg)
 		if err != nil {
-			return err
+			fmt.Printf("Error writing to robot: ", err)
 		}
 	}
-	return nil
 }
 
+func (s* Server) ReadData() {
+	defer s.robotConn.Close()
+	for {
+		buff := make([]byte, 1024)
+		_, err := s.robotConn.Read(buff)
+		if err != nil {
+			fmt.Printf("Error reading from the robot: ", err)
+		}
+		s.recv <- buff
+	}
+}
+
+func (s* Server) Serve() {
+	go s.WriteData()
+	go s.ReadData()
+}
