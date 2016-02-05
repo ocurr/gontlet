@@ -65,8 +65,8 @@ func (s* Server) WriteData() {
 			msg = append(msg, buff...)
 			_, err := s.robotConn.Write(msg)
 			if err != nil {
-				s.robotConn.Close()
 				if !<-s.unregister {
+					s.robotConn.Close()
 					s.unregister <- true
 				}
 				fmt.Printf("Error writing to robot: ", err)
@@ -85,8 +85,8 @@ func (s* Server) ReadData() {
 			_, err := s.robotConn.Read(buff)
 			if err != nil {
 				fmt.Printf("Error reading from the robot: ", err)
-				s.robotConn.Close()
 				if !<-s.unregister {
+					s.robotConn.Close()
 					s.unregister <- true
 				}
 				for <-s.unregister {
