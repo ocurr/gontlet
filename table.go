@@ -14,20 +14,6 @@ type Table struct {
 	Pairs []Entry
 }
 
-var tableList map[string]*Table
-
-func AddTable(name string) {
-	tableList[name] = &Table{Name: name, Pairs: make([]Entry,0)}
-}
-
-func UpdateTable(name string, e Entry) {
-	tableList[name].Update(e);
-}
-
-func GetTable(name string) *Table {
-	return tableList[name]
-}
-
 func (t *Table) GetEntry(name string) *Entry {
 	for _,v := range t.Pairs {
 		if v.Name == name {
