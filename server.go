@@ -3,6 +3,7 @@ package gontlet
 import (
 	"fmt"
 	"net"
+	"log"
 )
 
 type Server struct {
@@ -11,16 +12,30 @@ type Server struct {
 	recv chan []byte
 }
 
-func NewServer() *Server {
+func listen(l net.Listener,s *Server) {
+	defer l.Close()
+	conn, err := l.Accept()
+	if err != nil {
+		log.Fatal(err)
+	}
+	s.registerConn(conn)
+}
+
+func NewServer(port string) *Server {
+	l, err := net.Listen("tcp", "localhost:"+port)
+	if err != nil {
+		fmt.Println("Error starting listener: ", err)
+	}
 	s := Server{
 		robotConn: nil,
 		send: make(chan []byte, 25),
 		recv: make(chan []byte, 25),
 	}
+	go listen(l,&s)
 	return &s
 }
 
-func (s* Server) RegisterConnection(c net.Conn) {
+func (s* Server) registerConn(c net.Conn) {
 	s.robotConn = c
 }
 
