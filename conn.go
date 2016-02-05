@@ -11,14 +11,12 @@ type connection struct {
 }
 
 func (c connection) SendData(data []byte) {
-	fmt.Println("Connection Sending Message: ", string(data))
 	c.send <-data
 }
 
 func (c connection) WriteData(s *Server) {
 	for {
 		buff := <-c.send
-		fmt.Println("Goroutine Sending Message: ", string(buff))
 		msg := make([]byte, 1)
 		msg[0] = byte(uint8(len(buff)))
 		msg = append(msg, buff...)

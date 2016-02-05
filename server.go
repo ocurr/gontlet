@@ -67,7 +67,6 @@ func (s* Server) Serve() {
 			}
 		case m := <-s.send:
 			for c := range s.connections {
-				fmt.Println("Sending Message: ", string(m))
 				c.SendData(m)
 			}
 		}
