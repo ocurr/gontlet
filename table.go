@@ -1,7 +1,6 @@
 package gontlet
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -15,10 +14,10 @@ type Table struct {
 	Pairs []Entry
 }
 
-var tableList map[string][]*Table
+var tableList map[string]*Table
 
 func AddTable(name string) {
-	tableList[name] = &Table{Name: name, Pairs: make(map[string][]byte)})
+	tableList[name] = &Table{Name: name, Pairs: make([]Entry,0)}
 }
 
 func UpdateTable(name string, e Entry) {
@@ -30,7 +29,7 @@ func GetTable(name string) *Table {
 }
 
 func (t *Table) GetEntry(name string) *Entry {
-	for _,v in range t.Pairs {
+	for _,v := range t.Pairs {
 		if v.Name == name {
 			return &v
 		}
@@ -39,42 +38,52 @@ func (t *Table) GetEntry(name string) *Entry {
 }
 
 func (t *Table) Update(e Entry) {
-	if v := t.GetEntry(e.Name) != nil {
+	v := t.GetEntry(e.Name)
+	if v != nil {
 		v.Value = e.Value
 	} else {
 		t.Pairs = append(t.Pairs, e)
 	}
 }
 
-func (t *Table) getAsString(key string) string {
-	if v := t.GetEntry(e.Name) != nil {
-		return v.Value
-	} else {
-		return nil
+func (t *Table) getAsString(key string) (string, bool) {
+	v := t.GetEntry(key)
+	if v != nil {
+		return v.Value, true
 	}
+	return "", false
 }
 
-func (t *Table) getAsInt(key string) int32 {
-	if v := t.GetEntry(e.Name) != nil {
-		return strconv.ParseInt(v.Value,10,32)
-	} else {
-		return nil
+func (t *Table) getAsInt(key string) (int64, bool) {
+	v := t.GetEntry(key)
+	if v != nil {
+		i, err := strconv.ParseInt(v.Value,10,32)
+		if err == nil {
+			return i, true
+		}
 	}
+	return 0, false
 }
 
-func (t *Table) getAsBool(key string) bool {
-	if v := t.GetEntry(e.Name) != nil {
-		return strconv.ParseBool(v.Value)
-	} else {
-		return nil
+func (t *Table) getAsBool(key string) (bool,bool) {
+	v := t.GetEntry(key)
+	if v != nil {
+		b, err := strconv.ParseBool(v.Value)
+		if err == nil {
+			return b, true
+		}
 	}
+	return false,false
 }
 
-func (t *Table) getAsDouble(key string) float64 {
-	if v := t.GetEntry(e.Name) != nil {
-		return strconv.ParseFloat(v.Value,64)
-	} else {
-		return nil
+func (t *Table) getAsDouble(key string) (float64, bool) {
+	v := t.GetEntry(key)
+	if v != nil {
+		d, err := strconv.ParseFloat(v.Value,64)
+		if err == nil {
+			return d, true
+		}
 	}
+	return 0,false
 }
 
