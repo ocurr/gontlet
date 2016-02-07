@@ -1,34 +1,36 @@
 package gontlet
 
 import (
+	"fmt"
 	"strconv"
 )
 
 type Entry struct {
 	Name string
 	Value string
+	Updated bool
 }
 
 type Table struct {
-	Name string
-	Pairs []Entry
+	Pairs []*Entry
 }
 
 func (t *Table) GetEntry(name string) *Entry {
-	for _,v := range t.Pairs {
-		if v.Name == name {
-			return &v
+	for _,e := range t.Pairs {
+		if e.Name == name {
+			return e
 		}
 	}
 	return nil
 }
 
-func (t *Table) Update(e Entry) {
-	v := t.GetEntry(e.Name)
-	if v != nil {
-		v.Value = e.Value
+func (t *Table) Update(name, value string) {
+	e := t.GetEntry(name)
+	if e != nil {
+		e.Value = value
+		e.Updated = true
 	} else {
-		t.Pairs = append(t.Pairs, e)
+		t.Pairs = append(t.Pairs, &Entry{Name: name, Value: value, Updated: true})
 	}
 }
 
