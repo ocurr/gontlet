@@ -10,11 +10,11 @@ type connection struct {
 	send chan []byte
 }
 
-func (c connection) SendData(data []byte) {
+func (c connection) sendData(data []byte) {
 	c.send <-data
 }
 
-func (c connection) WriteData(s *Server) {
+func (c connection) writeData(s *Server) {
 	for {
 		buff := <-c.send
 		msg := make([]byte, 1)
@@ -29,7 +29,7 @@ func (c connection) WriteData(s *Server) {
 	}
 }
 
-func (c connection) ReadData(s *Server) {
+func (c connection) readData(s *Server) {
 	defer c.conn.Close()
 	for {
 		buff := make([]byte, 1024)
@@ -43,7 +43,7 @@ func (c connection) ReadData(s *Server) {
 	}
 }
 
-func (c connection) Handle(s *Server) {
-	go c.ReadData(s)
-	go c.WriteData(s)
+func (c connection) handle(s *Server) {
+	go c.readData(s)
+	go c.writeData(s)
 }

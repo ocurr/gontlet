@@ -26,7 +26,7 @@ func listen(l net.Listener,s *Server) {
 	}
 }
 
-func NewServer(port string) *Server {
+func newServer(port string) *Server {
 	l, err := net.Listen("tcp", "localhost:"+port)
 	if err != nil {
 		fmt.Println("Error starting listener: ", err)
@@ -46,20 +46,20 @@ func (s* Server) registerConn(c connection) {
 	s.register <- c
 }
 
-func (s* Server) SendOutgoing(data []byte) {
+func (s* Server) sendOutgoing(data []byte) {
 	s.send <- data
 }
 
-func (s* Server) GetIncoming() []byte {
+func (s* Server) getIncoming() []byte {
 	return <- s.recv
 }
 
-func (s* Server) Serve() {
+func (s* Server) serve() {
 	for {
 		select {
 		case c := <-s.register:
 			s.connections[c] = true
-			go c.Handle(s)
+			go c.handle(s)
 		case c := <-s.unregister:
 			if _,ok := s.connections[c]; ok {
 				delete(s.connections, c)
@@ -67,7 +67,7 @@ func (s* Server) Serve() {
 			}
 		case m := <-s.send:
 			for c := range s.connections {
-				c.SendData(m)
+				c.sendData(m)
 			}
 		}
 	}
