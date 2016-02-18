@@ -3,6 +3,7 @@ package gontlet
 import (
 	"fmt"
 	"net"
+	"time"
 )
 
 type connection struct {
@@ -26,6 +27,7 @@ func (c connection) writeData(s *Server) {
 			s.unregister <- c
 			break
 		}
+		time.Sleep(100*time.Millisecond)
 	}
 }
 
