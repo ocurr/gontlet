@@ -9,9 +9,9 @@ var (
 	server *Server
 )
 
-func Init() {
+func Init(port string) {
 	tableList = make(map[string]*Table)
-	server = newServer("8081")
+	server = newServer(port)
 	go server.serve()
 	go updateServer()
 }
