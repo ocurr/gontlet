@@ -34,7 +34,7 @@ func (t *Table) Update(name, value string) {
 	}
 }
 
-func (t *Table) getAsString(key string) (string, bool) {
+func (t *Table) GetAsString(key string) (string, bool) {
 	v := t.GetEntry(key)
 	if v != nil {
 		return v.Value, true
@@ -42,7 +42,7 @@ func (t *Table) getAsString(key string) (string, bool) {
 	return "", false
 }
 
-func (t *Table) getAsInt(key string) (int64, bool) {
+func (t *Table) GetAsInt(key string) (int64, bool) {
 	v := t.GetEntry(key)
 	if v != nil {
 		i, err := strconv.ParseInt(v.Value,10,32)
@@ -53,7 +53,7 @@ func (t *Table) getAsInt(key string) (int64, bool) {
 	return 0, false
 }
 
-func (t *Table) getAsBool(key string) (bool,bool) {
+func (t *Table) GetAsBool(key string) (bool,bool) {
 	v := t.GetEntry(key)
 	if v != nil {
 		b, err := strconv.ParseBool(v.Value)
@@ -64,7 +64,7 @@ func (t *Table) getAsBool(key string) (bool,bool) {
 	return false,false
 }
 
-func (t *Table) getAsDouble(key string) (float64, bool) {
+func (t *Table) GetAsDouble(key string) (float64, bool) {
 	v := t.GetEntry(key)
 	if v != nil {
 		d, err := strconv.ParseFloat(v.Value,64)
