@@ -22,7 +22,7 @@ func listen(l net.Listener,s *Server) {
 			log.Fatal(err)
 			break
 		}
-		s.registerConn(connection{conn: c, send: make(chan []byte, 25)})
+		s.registerConn(connection{conn: c, send: make(chan []byte, 1)})
 	}
 }
 
@@ -33,8 +33,8 @@ func newServer(port string) *Server {
 	}
 	s := Server{
 		connections: make(map[connection]bool),
-		send: make(chan []byte, 25),
-		recv: make(chan []byte, 25),
+		send: make(chan []byte, 1),
+		recv: make(chan []byte, 1),
 		register: make(chan connection, 3),
 		unregister: make(chan connection, 3),
 	}
