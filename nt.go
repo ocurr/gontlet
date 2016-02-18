@@ -1,7 +1,7 @@
 package gontlet
 
 import (
-	"fmt"
+	//"fmt"
 )
 
 var (
@@ -25,10 +25,10 @@ func GetTable(tableName string) *Table {
 
 func updateServer() {
 	for {
-		for k,v := range tableList {
+		for _,v := range tableList {
 			for _,entry := range v.Pairs {
 				if entry.Updated {
-					server.sendOutgoing([]byte(k+";"+entry.Name+"="+entry.Value))
+					server.sendOutgoing([]byte(entry.Name+"="+entry.Value))
 					entry.Updated = false
 				}
 			}
