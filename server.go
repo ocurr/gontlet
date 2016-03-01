@@ -2,19 +2,19 @@ package gontlet
 
 import (
 	"fmt"
-	"net"
 	"log"
+	"net"
 )
 
 type Server struct {
 	connections map[connection]bool
-	send chan []byte
-	recv chan []byte
-	register chan connection
-	unregister chan connection
+	send        chan []byte
+	recv        chan []byte
+	register    chan connection
+	unregister  chan connection
 }
 
-func listen(l net.Listener,s *Server) {
+func listen(l net.Listener, s *Server) {
 	defer l.Close()
 	for {
 		c, err := l.Accept()
@@ -33,35 +33,35 @@ func newServer(port string) *Server {
 	}
 	s := Server{
 		connections: make(map[connection]bool),
-		send: make(chan []byte, 1),
-		recv: make(chan []byte, 1),
-		register: make(chan connection, 3),
-		unregister: make(chan connection, 3),
+		send:        make(chan []byte, 1),
+		recv:        make(chan []byte, 1),
+		register:    make(chan connection, 3),
+		unregister:  make(chan connection, 3),
 	}
-	go listen(l,&s)
+	go listen(l, &s)
 	return &s
 }
 
-func (s* Server) registerConn(c connection) {
+func (s *Server) registerConn(c connection) {
 	s.register <- c
 }
 
-func (s* Server) sendOutgoing(data []byte) {
+func (s *Server) sendOutgoing(data []byte) {
 	s.send <- data
 }
 
-func (s* Server) getIncoming() []byte {
-	return <- s.recv
+func (s *Server) getIncoming() []byte {
+	return <-s.recv
 }
 
-func (s* Server) serve() {
+func (s *Server) serve() {
 	for {
 		select {
 		case c := <-s.register:
 			s.connections[c] = true
 			go c.handle(s)
 		case c := <-s.unregister:
-			if _,ok := s.connections[c]; ok {
+			if _, ok := s.connections[c]; ok {
 				delete(s.connections, c)
 				close(c.send)
 			}
