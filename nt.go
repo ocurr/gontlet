@@ -1,19 +1,22 @@
 package gontlet
 
-import (
-	//"fmt"
-)
-
 var (
 	tableList map[string]*Table
-	server *Server
+	transport Transport
 )
 
-func Init(port string) {
+func InitServer(port string) {
 	tableList = make(map[string]*Table)
-	server = newServer(port)
-	go server.serve()
-	go updateServer()
+	transport = newServer(port)
+	go transport.serve()
+	go updateTransport()
+}
+
+func InitClient(address string) {
+	tableList = make(map[string]*Table)
+	transport = newClient(address)
+	go transport.serve()
+	go updateTransport()
 }
 
 func GetTable(tableName string) *Table {
@@ -23,12 +26,12 @@ func GetTable(tableName string) *Table {
 	return tableList[tableName]
 }
 
-func updateServer() {
+func updateTransport() {
 	for {
-		for _,v := range tableList {
-			for _,entry := range v.Pairs {
+		for _, v := range tableList {
+			for _, entry := range v.Pairs {
 				if entry.Updated {
-					server.sendOutgoing([]byte(entry.Name+"="+entry.Value))
+					transport.sendOutgoing([]byte(entry.Name + "=" + entry.Value))
 					entry.Updated = false
 				}
 			}
