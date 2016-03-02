@@ -12,7 +12,7 @@ type connection struct {
 }
 
 func (c connection) sendData(data []byte) {
-	c.send <-data
+	c.send <- data
 }
 
 func (c connection) writeData(s *Server) {
@@ -27,7 +27,7 @@ func (c connection) writeData(s *Server) {
 			s.unregister <- c
 			break
 		}
-		time.Sleep(100*time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 	}
 }
 
