@@ -46,12 +46,20 @@ func (s *Server) registerConn(c connection) {
 	s.register <- c
 }
 
+func (s *Server) unregisterConn(conn connection) {
+	s.unregister <- conn
+}
+
 func (s *Server) sendOutgoing(data []byte) {
 	s.send <- data
 }
 
 func (s *Server) getIncoming() []byte {
 	return <-s.recv
+}
+
+func (s *Server) recieve(buff []byte) {
+	s.recv <- buff
 }
 
 func (s *Server) serve() {
