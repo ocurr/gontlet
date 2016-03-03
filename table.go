@@ -6,8 +6,8 @@ import (
 )
 
 type Entry struct {
-	Name string
-	Value string
+	Name    string
+	Value   string
 	Updated bool
 }
 
@@ -16,7 +16,7 @@ type Table struct {
 }
 
 func (t *Table) GetEntry(name string) *Entry {
-	for _,e := range t.Pairs {
+	for _, e := range t.Pairs {
 		if e.Name == name {
 			return e
 		}
@@ -45,7 +45,7 @@ func (t *Table) GetAsString(key string) (string, bool) {
 func (t *Table) GetAsInt(key string) (int64, bool) {
 	v := t.GetEntry(key)
 	if v != nil {
-		i, err := strconv.ParseInt(v.Value,10,32)
+		i, err := strconv.ParseInt(v.Value, 10, 32)
 		if err == nil {
 			return i, true
 		}
@@ -53,7 +53,7 @@ func (t *Table) GetAsInt(key string) (int64, bool) {
 	return 0, false
 }
 
-func (t *Table) GetAsBool(key string) (bool,bool) {
+func (t *Table) GetAsBool(key string) (bool, bool) {
 	v := t.GetEntry(key)
 	if v != nil {
 		b, err := strconv.ParseBool(v.Value)
@@ -61,17 +61,16 @@ func (t *Table) GetAsBool(key string) (bool,bool) {
 			return b, true
 		}
 	}
-	return false,false
+	return false, false
 }
 
 func (t *Table) GetAsDouble(key string) (float64, bool) {
 	v := t.GetEntry(key)
 	if v != nil {
-		d, err := strconv.ParseFloat(v.Value,64)
+		d, err := strconv.ParseFloat(v.Value, 64)
 		if err == nil {
 			return d, true
 		}
 	}
-	return 0,false
+	return 0, false
 }
-
