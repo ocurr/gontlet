@@ -15,7 +15,7 @@ func (c connection) sendData(data []byte) {
 	c.send <- data
 }
 
-func (c connection) writeData(s *Server) {
+func (c connection) writeData(t Transport) {
 	for {
 		buff := <-c.send
 		msg := make([]byte, 1)
@@ -24,28 +24,28 @@ func (c connection) writeData(s *Server) {
 		_, err := c.conn.Write(msg)
 		if err != nil {
 			fmt.Printf("Error writing to robot: ", err)
-			s.unregister <- c
+			t.unregisterConn(c)
 			break
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
 }
 
-func (c connection) readData(s *Server) {
+func (c connection) readData(t Transport) {
 	defer c.conn.Close()
 	for {
 		buff := make([]byte, 1024)
 		_, err := c.conn.Read(buff)
 		if err != nil {
 			fmt.Printf("Error reading from the robot: ", err)
-			s.unregister <- c
+			t.unregisterConn(c)
 			break
 		}
-		s.recv <- buff
+		t.recieve(buff)
 	}
 }
 
-func (c connection) handle(s *Server) {
-	go c.readData(s)
-	go c.writeData(s)
+func (c connection) handle(t Transport) {
+	go c.readData(t)
+	go c.writeData(t)
 }
