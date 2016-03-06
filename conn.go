@@ -27,7 +27,7 @@ func (c connection) writeData(t Transport) {
 			t.unregisterConn(c)
 			break
 		}
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(50 * time.Millisecond)
 	}
 }
 
